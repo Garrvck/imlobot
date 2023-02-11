@@ -21,29 +21,31 @@ from data.transliterate import to_latin, to_cyrillic
 
 @dp.message_handler()
 async def chekword(message: types.Message):
-    word = message.text
-    lotin = False
-    #alifboni tekshirish
-    if word.isascii():
-        lotin = True
-        word = to_cyrillic(word)
+    x = message.text
+    word_list = x.split()
+    for word in word_list:
+        lotin = False
+        #alifboni tekshirish
+        if word.isascii():
+            lotin = True
+            word = to_cyrillic(word)
 
-    result = checkWords(word)
-    if result['available']:
-        if lotin:
-            response = f"✅ {to_latin(word.capitalize())}"
-        else:
-            response = f"✅ {word.capitalize()}"
-
-    else:
-        if lotin:
-            response = f"❌ {to_latin(word.capitalize())}\n"
-        else:
-            response = f"❌ {word.capitalize()}\n"
-        for text in result['matches']:
+        result = checkWords(word)
+        if result['available']:
             if lotin:
-                response += f"✅ {to_latin(text.capitalize())}\n"
+                response = f"✅ {to_latin(word.capitalize())}"
             else:
-                response += f"✅ {text.capitalize()}\n"
-    await message.answer(response)
+                response = f"✅ {word.capitalize()}"
+
+        else:
+            if lotin:
+                response = f"❌ {to_latin(word.capitalize())}\n"
+            else:
+                response = f"❌ {word.capitalize()}\n"
+            for text in result['matches']:
+                if lotin:
+                    response += f"✅ {to_latin(text.capitalize())}\n"
+                else:
+                    response += f"✅ {text.capitalize()}\n"
+        await message.answer(response)
 
